@@ -42,22 +42,41 @@ class HomeView extends GetView<HomeController> {
           );
         }
 
-        return ListView.builder(
-          itemCount: controller.coins.length,
-          itemBuilder: (context, index) {
-            final coin = controller.coins[index];
-
-            return ListTile(
-              leading: CircleAvatar(
-                child: Text(coin.symbol),
-              ),
-              title: Text(coin.name),
-              subtitle: Text(coin.symbol),
-              trailing: Text(
-                '\$${coin.price.toStringAsFixed(2)}',
-              ),
-            );
+        return NotificationListener<ScrollNotification>(
+          onNotification: (notification) {
+            if (notification.metrics.pixels >=
+                notification.metrics.maxScrollExtent - 200) {
+              controller.loadMoreCoins();
+            }
+            return false;
           },
+          child: ListView.builder(
+            itemCount: controller.coins.length +
+                (controller.hasMore ? 1 : 0),
+            itemBuilder: (context, index) {
+              if (index == controller.coins.length) {
+                return const Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+              }
+
+              final coin = controller.coins[index];
+
+              return ListTile(
+                leading: CircleAvatar(
+                  child: Text(coin.symbol),
+                ),
+                title: Text(coin.name),
+                subtitle: Text(coin.symbol),
+                trailing: Text(
+                  '\$${coin.price.toStringAsFixed(2)}',
+                ),
+              );
+            },
+          ),
         );
       }),
     );
