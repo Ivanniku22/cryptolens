@@ -1,6 +1,8 @@
 
 import 'package:get/get.dart';
 
+import '../../presentation/coin_details/bindings/coin_details_binding.dart';
+import '../../presentation/coin_details/view/coin_details_view.dart';
 import '../../presentation/home/bindings/home_binding.dart';
 import '../../presentation/home/views/home_view.dart';
 import 'app_routes.dart';
@@ -11,6 +13,11 @@ class AppPages {
       name: AppRoutes.home,
       page: () => const HomeView(),
       binding: HomeBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.coinDetails,
+      page: () => const CoinDetailsView(),
+      binding: CoinDetailsBinding(),
     ),
   ];
 }

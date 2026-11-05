@@ -20,11 +20,31 @@ class MyApp extends StatelessWidget {
       initialBinding: AppBinding(),
       initialRoute: AppRoutes.home,
       getPages: AppPages.routes,
+
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.deepPurple,
-        ),
+        brightness: Brightness.dark,
         useMaterial3: true,
+
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF00C853),
+          brightness: Brightness.dark,
+          surface: const Color(0xFF151A1E),
+        ),
+
+        scaffoldBackgroundColor: const Color(0xFF0D1117),
+
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF0D1117),
+          foregroundColor: Colors.white,
+          elevation: 0,
+          centerTitle: false,
+        ),
+
+        dividerColor: const Color(0xFF252D33),
+
+        iconTheme: const IconThemeData(
+          color: Colors.white70,
+        ),
       ),
     );
   }

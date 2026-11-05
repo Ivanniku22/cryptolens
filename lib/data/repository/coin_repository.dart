@@ -14,4 +14,16 @@ class CoinRepository {
         .map((coin) => CoinModel.fromJson(coin))
         .toList();
   }
+
+
+  Future<CoinModel> getCoinById(String coinId) async {
+    final response = await _service.getTickerById(coinId);
+
+    return CoinModel.fromJson(response);
+  }
+
+  Future<Map<String, dynamic>> getCoinDetails(String coinId) async {
+    return await _service.getCoinDetails(coinId);
+  }
+
 }

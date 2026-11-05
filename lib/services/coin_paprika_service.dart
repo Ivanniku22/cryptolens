@@ -21,4 +21,32 @@ class CoinPaprikaService {
       );
     }
   }
+
+
+  Future<Map<String, dynamic>> getCoinDetails(String coinId) async {
+    try {
+      final response = await _dio.get('/coins/$coinId');
+
+      return response.data as Map<String, dynamic>;
+    } on DioException catch (e) {
+      throw Exception(
+        'Failed to fetch coin details: ${e.message}',
+      );
+    }
+  }
+
+
+  Future<Map<String, dynamic>> getTickerById(String coinId) async {
+    try {
+      final response = await _dio.get('/tickers/$coinId');
+
+      return response.data as Map<String, dynamic>;
+    } on DioException catch (e) {
+      throw Exception(
+        'Failed to fetch coin ticker: ${e.message}',
+      );
+    }
+  }
+
+
 }

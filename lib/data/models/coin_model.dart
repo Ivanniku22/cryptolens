@@ -29,7 +29,7 @@ class CoinModel {
       marketCap: (usd['market_cap'] as num).toDouble(),
       volume24h: (usd['volume_24h'] as num).toDouble(),
       percentChange24h:
-      (usd['percent_change_24h'] as num).toDouble(),
+      (usd['percent_change_24h'] as num?)?.toDouble() ?? 0.0,
     );
   }
 }
