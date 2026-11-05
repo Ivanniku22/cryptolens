@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 import '../../../core/utils/price_formatter.dart';
 import '../controller/coin_details_controller.dart';
+import '../widgets/price_chart.dart';
 
 class CoinDetailsView extends GetView<CoinDetailsController> {
   const CoinDetailsView({super.key});
@@ -16,6 +17,7 @@ class CoinDetailsView extends GetView<CoinDetailsController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
         title: Obx(
               () => Text(
@@ -198,9 +200,21 @@ class CoinDetailsView extends GetView<CoinDetailsController> {
                 ),
               ),
 
-              const SizedBox(height: 32),
+              const SizedBox(height: 30),
 
-              // Market statistics heading
+              // Historical price chart
+              PriceChart(
+                prices: controller.historicalPrices.toList(),
+                selectedRange: controller.selectedRange.value,
+                timeRanges: controller.timeRanges,
+                isLoading: controller.isChartLoading.value,
+                errorMessage: controller.chartError.value,
+                onRangeChanged: controller.changeTimeRange,
+              ),
+
+              const SizedBox(height: 30),
+
+              // Market statistics
               const Text(
                 'Market Statistics',
                 style: TextStyle(

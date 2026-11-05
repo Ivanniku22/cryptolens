@@ -1,5 +1,6 @@
 
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 
 class CoinPaprikaService {
   final Dio _dio;
@@ -64,6 +65,10 @@ class CoinPaprikaService {
 
       return response.data as List<dynamic>;
     } on DioException catch (e) {
+      debugPrint('Historical API status: ${e.response?.statusCode}');
+      debugPrint('Historical API response: ${e.response?.data}');
+      debugPrint('Historical API request: ${e.requestOptions.uri}');
+
       throw Exception(
         'Failed to fetch historical price data: ${e.message}',
       );

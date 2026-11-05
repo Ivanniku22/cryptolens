@@ -79,7 +79,7 @@ class CoinDetailsController extends GetxController {
 
       switch (range) {
         case '1D':
-          duration = const Duration(hours: 24);
+          duration = const Duration(hours: 23, minutes: 50);
           interval = '1h';
           break;
 
@@ -99,7 +99,7 @@ class CoinDetailsController extends GetxController {
           break;
 
         case '1Y':
-          duration = const Duration(days: 365);
+          duration = const Duration(days: 364, hours: 23);
           interval = '1d';
           break;
 
