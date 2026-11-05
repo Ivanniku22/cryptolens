@@ -1,3 +1,4 @@
+
 import 'package:dio/dio.dart';
 
 class CoinPaprikaService {
@@ -22,7 +23,6 @@ class CoinPaprikaService {
     }
   }
 
-
   Future<Map<String, dynamic>> getCoinDetails(String coinId) async {
     try {
       final response = await _dio.get('/coins/$coinId');
@@ -34,7 +34,6 @@ class CoinPaprikaService {
       );
     }
   }
-
 
   Future<Map<String, dynamic>> getTickerById(String coinId) async {
     try {
@@ -48,5 +47,26 @@ class CoinPaprikaService {
     }
   }
 
+  Future<List<dynamic>> getHistoricalTickers(
+      String coinId, {
+        required String start,
+        required String interval,
+      }) async {
+    try {
+      final response = await _dio.get(
+        '/tickers/$coinId/historical',
+        queryParameters: {
+          'start': start,
+          'interval': interval,
+          'quote': 'usd',
+        },
+      );
 
+      return response.data as List<dynamic>;
+    } on DioException catch (e) {
+      throw Exception(
+        'Failed to fetch historical price data: ${e.message}',
+      );
+    }
+  }
 }

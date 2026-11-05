@@ -1,10 +1,17 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../../core/utils/price_formatter.dart';
 import '../controller/coin_details_controller.dart';
 
 class CoinDetailsView extends GetView<CoinDetailsController> {
   const CoinDetailsView({super.key});
+
+  static const Color backgroundColor = Color(0xFF0D1117);
+  static const Color cardColor = Color(0xFF151A1E);
+  static const Color borderColor = Color(0xFF252D33);
+  static const Color greenColor = Color(0xFF00C853);
 
   @override
   Widget build(BuildContext context) {
@@ -13,6 +20,10 @@ class CoinDetailsView extends GetView<CoinDetailsController> {
         title: Obx(
               () => Text(
             controller.coin.value?.name ?? 'Coin Details',
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
       ),
@@ -25,7 +36,28 @@ class CoinDetailsView extends GetView<CoinDetailsController> {
 
         if (controller.errorMessage.isNotEmpty) {
           return Center(
-            child: Text(controller.errorMessage.value),
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    controller.errorMessage.value,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      final coinId = controller.coin.value?.id;
+                      if (coinId != null) {
+                        controller.loadCoin(coinId);
+                      }
+                    },
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
+            ),
           );
         }
 
@@ -37,40 +69,205 @@ class CoinDetailsView extends GetView<CoinDetailsController> {
           );
         }
 
+        final isPositive = coin.percentChange24h >= 0;
+
+        final description =
+            controller.details['description']?.toString() ?? '';
+
         return SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                coin.name,
-                style: Theme.of(context).textTheme.headlineMedium,
+              // Coin identity
+              Row(
+                children: [
+                  CircleAvatar(
+                    radius: 28,
+                    backgroundColor: borderColor,
+                    child: Text(
+                      coin.symbol.length > 3
+                          ? coin.symbol.substring(0, 3)
+                          : coin.symbol,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          coin.name,
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          coin.symbol.toUpperCase(),
+                          style: const TextStyle(
+                            color: Colors.white54,
+                            fontSize: 13,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              Text(
-                coin.symbol.toUpperCase(),
-                style: Theme.of(context).textTheme.bodyMedium,
+
+              const SizedBox(height: 32),
+
+              // Current price
+              const Text(
+                'CURRENT PRICE',
+                style: TextStyle(
+                  color: Colors.white54,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 1.3,
+                ),
               ),
-              const SizedBox(height: 16),
+
+              const SizedBox(height: 10),
+
               Text(
-                '\$${coin.price.toStringAsFixed(2)}',
-                style: Theme.of(context).textTheme.headlineLarge,
+                PriceFormatter.format(coin.price),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 34,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: -1,
+                ),
               ),
-              const SizedBox(height: 24),
+
+              const SizedBox(height: 12),
+
+              // 24-hour change indicator
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: isPositive
+                      ? greenColor.withOpacity(0.12)
+                      : Colors.redAccent.withOpacity(0.12),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      isPositive
+                          ? Icons.arrow_upward
+                          : Icons.arrow_downward,
+                      color: isPositive
+                          ? greenColor
+                          : Colors.redAccent,
+                      size: 15,
+                    ),
+                    const SizedBox(width: 5),
+                    Text(
+                      '${isPositive ? '+' : '-'}${coin.percentChange24h.abs().toStringAsFixed(2)}%',
+                      style: TextStyle(
+                        color: isPositive
+                            ? greenColor
+                            : Colors.redAccent,
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(width: 5),
+                    const Text(
+                      '24h',
+                      style: TextStyle(
+                        color: Colors.white54,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 32),
+
+              // Market statistics heading
               const Text(
                 'Market Statistics',
                 style: TextStyle(
+                  color: Colors.white,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 12),
-              _statRow('Market Cap', coin.marketCap),
-              _statRow('24h Volume', coin.volume24h),
-              _statRow(
-                '24h Change',
-                coin.percentChange24h,
-                isPercentage: true,
+
+              const SizedBox(height: 14),
+
+              // Statistics card
+              Container(
+                padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                  color: cardColor,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: borderColor,
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    _statRow(
+                      'Market Cap',
+                      _formatCurrency(coin.marketCap),
+                    ),
+                    _statDivider(),
+                    _statRow(
+                      '24h Volume',
+                      _formatCurrency(coin.volume24h),
+                    ),
+                    _statDivider(),
+                    _statRow(
+                      '24h Change',
+                      '${coin.percentChange24h >= 0 ? '+' : ''}${coin.percentChange24h.toStringAsFixed(2)}%',
+                      valueColor: isPositive
+                          ? greenColor
+                          : Colors.redAccent,
+                    ),
+                  ],
+                ),
               ),
+
+              // Coin description
+              if (description.trim().isNotEmpty) ...[
+                const SizedBox(height: 30),
+                const Text(
+                  'About',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  description,
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 14,
+                    height: 1.7,
+                  ),
+                ),
+              ],
+
+              const SizedBox(height: 30),
             ],
           ),
         );
@@ -80,22 +277,58 @@ class CoinDetailsView extends GetView<CoinDetailsController> {
 
   Widget _statRow(
       String label,
-      double value, {
-        bool isPercentage = false,
+      String value, {
+        Color valueColor = Colors.white,
       }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 12),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label),
           Text(
-            isPercentage
-                ? '${value.toStringAsFixed(2)}%'
-                : '\$${value.toStringAsFixed(2)}',
+            label,
+            style: const TextStyle(
+              color: Colors.white54,
+              fontSize: 13,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Flexible(
+            child: Text(
+              value,
+              textAlign: TextAlign.end,
+              style: TextStyle(
+                color: valueColor,
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
         ],
       ),
     );
+  }
+
+  Widget _statDivider() {
+    return const Divider(
+      color: borderColor,
+      height: 1,
+    );
+  }
+
+  String _formatCurrency(double value) {
+    if (value >= 1000000000) {
+      return '\$${(value / 1000000000).toStringAsFixed(2)}B';
+    }
+
+    if (value >= 1000000) {
+      return '\$${(value / 1000000).toStringAsFixed(2)}M';
+    }
+
+    if (value >= 1000) {
+      return '\$${(value / 1000).toStringAsFixed(2)}K';
+    }
+
+    return '\$${value.toStringAsFixed(2)}';
   }
 }

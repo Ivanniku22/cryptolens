@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../app/routes/app_routes.dart';
+import '../../../core/utils/price_formatter.dart';
 import '../controller/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
@@ -182,7 +183,7 @@ class HomeView extends GetView<HomeController> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            '\$${coin.price.toStringAsFixed(2)}',
+                            PriceFormatter.format(coin.price),
                             style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.w600,
