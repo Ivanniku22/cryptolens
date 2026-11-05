@@ -255,6 +255,16 @@ class CoinDetailsView extends GetView<CoinDetailsController> {
                           ? greenColor
                           : Colors.redAccent,
                     ),
+                    _statDivider(),
+                    _statRow(
+                      'Total Supply',
+                      _formatSupply(coin.totalSupply, coin.symbol),
+                    ),
+                    _statDivider(),
+                    _statRow(
+                      'Max Supply',
+                      _formatSupply(coin.maxSupply, coin.symbol),
+                    ),
                   ],
                 ),
               ),
@@ -344,5 +354,25 @@ class CoinDetailsView extends GetView<CoinDetailsController> {
     }
 
     return '\$${value.toStringAsFixed(2)}';
+  }
+
+  String _formatSupply(double? value, String symbol) {
+    if (value == null || value <= 0) {
+      return 'N/A';
+    }
+
+    String formatted;
+
+    if (value >= 1000000000) {
+      formatted = '${(value / 1000000000).toStringAsFixed(2)}B';
+    } else if (value >= 1000000) {
+      formatted = '${(value / 1000000).toStringAsFixed(2)}M';
+    } else if (value >= 1000) {
+      formatted = '${(value / 1000).toStringAsFixed(2)}K';
+    } else {
+      formatted = value.toStringAsFixed(2);
+    }
+
+    return '$formatted $symbol';
   }
 }
