@@ -159,8 +159,8 @@ class CoinDetailsView extends GetView<CoinDetailsController> {
                 ),
                 decoration: BoxDecoration(
                   color: isPositive
-                      ? greenColor.withOpacity(0.12)
-                      : Colors.redAccent.withOpacity(0.12),
+                      ? greenColor.withValues(alpha: 0.12)
+                      : Colors.redAccent.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(

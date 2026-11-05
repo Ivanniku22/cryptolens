@@ -201,8 +201,8 @@ class HomeView extends GetView<HomeController> {
                             decoration: BoxDecoration(
                               color: isPositive
                                   ? const Color(0xFF00C853)
-                                  .withOpacity(0.12)
-                                  : Colors.redAccent.withOpacity(0.12),
+                                  .withValues(alpha: 0.12)
+                                  : Colors.redAccent.withValues(alpha: 0.12),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Row(

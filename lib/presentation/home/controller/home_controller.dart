@@ -29,7 +29,6 @@ class HomeController extends GetxController {
       errorMessage.value = '';
 
       final result = await _repository.getCoins();
-      print('Total coins fetched: ${result.length}');
 
       _allCoins
         ..clear()
@@ -56,7 +55,6 @@ class HomeController extends GetxController {
     final end = start + count;
 
     coins.addAll(_allCoins.sublist(start, end));
-    print('Coins currently displayed: ${coins.length}');
 
     hasMore = end < _allCoins.length;
 
