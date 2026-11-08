@@ -10,9 +10,9 @@ class AppBinding extends Bindings {
     Get.lazyPut<Dio>(
           () => Dio(
         BaseOptions(
-          baseUrl: 'http://192.168.1.2:3000/api',
-          connectTimeout: const Duration(seconds: 15),
-          receiveTimeout: const Duration(seconds: 15),
+          baseUrl: 'https://cryptolens-backend-irqi.onrender.com/api',
+          connectTimeout: const Duration(seconds: 30),
+          receiveTimeout: const Duration(seconds: 120),
         ),
       ),
     );
