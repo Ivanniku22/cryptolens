@@ -9,7 +9,7 @@ class CoinPaprikaService {
   Future<List<dynamic>> getTickers() async {
     try {
       final response = await _dio.get(
-        '/tickers',
+        '/coins',
         queryParameters: {
           'quotes': 'USD',
         },
@@ -25,7 +25,7 @@ class CoinPaprikaService {
 
   Future<Map<String, dynamic>> getCoinDetails(String coinId) async {
     try {
-      final response = await _dio.get('/coins/$coinId');
+      final response = await _dio.get('/coin-info/$coinId');
 
       return response.data as Map<String, dynamic>;
     } on DioException catch (e) {
@@ -37,7 +37,7 @@ class CoinPaprikaService {
 
   Future<Map<String, dynamic>> getTickerById(String coinId) async {
     try {
-      final response = await _dio.get('/tickers/$coinId');
+      final response = await _dio.get('/coins/$coinId');
 
       return response.data as Map<String, dynamic>;
     } on DioException catch (e) {
@@ -54,7 +54,7 @@ class CoinPaprikaService {
       }) async {
     try {
       final response = await _dio.get(
-        '/tickers/$coinId/historical',
+        '/coins/$coinId/historical',
         queryParameters: {
           'start': start,
           'interval': interval,

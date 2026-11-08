@@ -44,3 +44,9 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Node.js backend
+cryptolens_backend/node_modules/
+cryptolens_backend/.env
+cryptolens_backend/npm-debug.log*
+cryptolens_backend/logs/

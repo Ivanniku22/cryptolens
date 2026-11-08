@@ -1,0 +1,19 @@
+{
+  "name": "cryptolens_backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+  "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "axios": "^1.21.0",
+    "cors": "^2.8.6",
+    "express": "^5.3.0",
+    "node-cache": "^5.1.2"
+  }
+}
