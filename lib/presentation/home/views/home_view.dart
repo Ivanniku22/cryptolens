@@ -99,6 +99,69 @@ class HomeView extends GetView<HomeController> {
             ),
           ),
 
+
+          // Sorting dropdown
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+            child: Obx(
+                  () => Row(
+                children: [
+                  const Icon(
+                    Icons.sort,
+                    color: Colors.white54,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  const Text(
+                    'Sort by',
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 13,
+                    ),
+                  ),
+                  const Spacer(),
+                  DropdownButton<CoinSortOption>(
+                    value: controller.sortOption.value,
+                    dropdownColor: const Color(0xFF151A1E),
+                    underline: const SizedBox.shrink(),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 13,
+                    ),
+                    icon: const Icon(
+                      Icons.keyboard_arrow_down,
+                      color: Color(0xFF00C853),
+                    ),
+                    items: const [
+                      DropdownMenuItem(
+                        value: CoinSortOption.marketCap,
+                        child: Text('Market Cap'),
+                      ),
+                      DropdownMenuItem(
+                        value: CoinSortOption.price,
+                        child: Text('Price'),
+                      ),
+                      DropdownMenuItem(
+                        value: CoinSortOption.gainers,
+                        child: Text('Top Gainers'),
+                      ),
+                      DropdownMenuItem(
+                        value: CoinSortOption.losers,
+                        child: Text('Top Losers'),
+                      ),
+                    ],
+                    onChanged: (option) {
+                      if (option != null) {
+                        controller.changeSortOption(option);
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+
           // Coin list
           Expanded(
             child: Obx(() {

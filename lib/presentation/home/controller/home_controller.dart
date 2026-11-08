@@ -1,13 +1,20 @@
 
-
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 import '../../../data/models/coin_model.dart';
 import '../../../data/repository/coin_repository.dart';
 
+enum CoinSortOption {
+  marketCap,
+  price,
+  gainers,
+  losers,
+}
+
 class HomeController extends GetxController {
   final CoinRepository _repository = Get.find<CoinRepository>();
+
   final TextEditingController searchTextController =
   TextEditingController();
 
@@ -18,6 +25,9 @@ class HomeController extends GetxController {
   final RxBool isLoadingMore = false.obs;
   final RxString errorMessage = ''.obs;
   final RxString searchQuery = ''.obs;
+
+  final Rx<CoinSortOption> sortOption =
+      CoinSortOption.marketCap.obs;
 
   final List<CoinModel> _allCoins = [];
   List<CoinModel> _filteredCoins = [];
@@ -47,7 +57,7 @@ class HomeController extends GetxController {
         ..clear()
         ..addAll(result);
 
-      _applySearch();
+      _applyFiltersAndSort();
     } catch (e) {
       errorMessage.value = e.toString();
     } finally {
@@ -57,16 +67,21 @@ class HomeController extends GetxController {
 
   void searchCoins(String query) {
     searchQuery.value = query;
-    _applySearch();
+    _applyFiltersAndSort();
   }
 
   void clearSearch() {
     searchTextController.clear();
     searchQuery.value = '';
-    _applySearch();
+    _applyFiltersAndSort();
   }
 
-  void _applySearch() {
+  void changeSortOption(CoinSortOption option) {
+    sortOption.value = option;
+    _applyFiltersAndSort();
+  }
+
+  void _applyFiltersAndSort() {
     final query = searchQuery.value.trim().toLowerCase();
 
     if (query.isEmpty) {
@@ -76,6 +91,36 @@ class HomeController extends GetxController {
         return coin.name.toLowerCase().contains(query) ||
             coin.symbol.toLowerCase().contains(query);
       }).toList();
+    }
+
+    switch (sortOption.value) {
+      case CoinSortOption.marketCap:
+        _filteredCoins.sort(
+              (a, b) => b.marketCap.compareTo(a.marketCap),
+        );
+        break;
+
+      case CoinSortOption.price:
+        _filteredCoins.sort(
+              (a, b) => b.price.compareTo(a.price),
+        );
+        break;
+
+      case CoinSortOption.gainers:
+        _filteredCoins.sort(
+              (a, b) => b.percentChange24h.compareTo(
+            a.percentChange24h,
+          ),
+        );
+        break;
+
+      case CoinSortOption.losers:
+        _filteredCoins.sort(
+              (a, b) => a.percentChange24h.compareTo(
+            b.percentChange24h,
+          ),
+        );
+        break;
     }
 
     coins.assignAll(_filteredCoins.take(pageSize));
