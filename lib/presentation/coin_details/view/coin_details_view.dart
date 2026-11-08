@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../core/utils/price_formatter.dart';
+import '../../watchlist/controller/watchlist_controller.dart';
 import '../controller/coin_details_controller.dart';
 import '../widgets/price_chart.dart';
 
@@ -16,6 +17,9 @@ class CoinDetailsView extends GetView<CoinDetailsController> {
 
   @override
   Widget build(BuildContext context) {
+
+    final watchlistController = Get.find<WatchlistController>();
+
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
@@ -28,6 +32,28 @@ class CoinDetailsView extends GetView<CoinDetailsController> {
             ),
           ),
         ),
+        actions: [
+          Obx(() {
+            final coinId = controller.coin.value?.id;
+            final isSaved = coinId != null &&
+                watchlistController.isInWatchlist(coinId);
+
+            return IconButton(
+              onPressed: coinId == null
+                  ? null
+                  : () {
+                watchlistController.toggleWatchlist(coinId);
+              },
+              icon: Icon(
+                isSaved ? Icons.favorite : Icons.favorite_border,
+                color: isSaved ? Colors.redAccent : Colors.white,
+              ),
+              tooltip: isSaved
+                  ? 'Remove from Watchlist'
+                  : 'Add to Watchlist',
+            );
+          }),
+        ],
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
