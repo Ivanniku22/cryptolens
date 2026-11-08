@@ -1,10 +1,15 @@
 
+
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+
 import '../../../data/models/coin_model.dart';
 import '../../../data/repository/coin_repository.dart';
 
 class HomeController extends GetxController {
   final CoinRepository _repository = Get.find<CoinRepository>();
+  final TextEditingController searchTextController =
+  TextEditingController();
 
   static const int pageSize = 20;
 
@@ -12,8 +17,10 @@ class HomeController extends GetxController {
   final RxBool isLoading = false.obs;
   final RxBool isLoadingMore = false.obs;
   final RxString errorMessage = ''.obs;
+  final RxString searchQuery = ''.obs;
 
   final List<CoinModel> _allCoins = [];
+  List<CoinModel> _filteredCoins = [];
 
   bool hasMore = true;
 
@@ -21,6 +28,12 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
     fetchCoins();
+  }
+
+  @override
+  void onClose() {
+    searchTextController.dispose();
+    super.onClose();
   }
 
   Future<void> fetchCoins() async {
@@ -34,14 +47,39 @@ class HomeController extends GetxController {
         ..clear()
         ..addAll(result);
 
-      coins.assignAll(_allCoins.take(pageSize));
-
-      hasMore = coins.length < _allCoins.length;
+      _applySearch();
     } catch (e) {
       errorMessage.value = e.toString();
     } finally {
       isLoading.value = false;
     }
+  }
+
+  void searchCoins(String query) {
+    searchQuery.value = query;
+    _applySearch();
+  }
+
+  void clearSearch() {
+    searchTextController.clear();
+    searchQuery.value = '';
+    _applySearch();
+  }
+
+  void _applySearch() {
+    final query = searchQuery.value.trim().toLowerCase();
+
+    if (query.isEmpty) {
+      _filteredCoins = List.from(_allCoins);
+    } else {
+      _filteredCoins = _allCoins.where((coin) {
+        return coin.name.toLowerCase().contains(query) ||
+            coin.symbol.toLowerCase().contains(query);
+      }).toList();
+    }
+
+    coins.assignAll(_filteredCoins.take(pageSize));
+    hasMore = coins.length < _filteredCoins.length;
   }
 
   void loadMoreCoins() {
@@ -50,13 +88,13 @@ class HomeController extends GetxController {
     isLoadingMore.value = true;
 
     final start = coins.length;
-    final remaining = _allCoins.length - start;
+    final remaining = _filteredCoins.length - start;
     final count = remaining < pageSize ? remaining : pageSize;
     final end = start + count;
 
-    coins.addAll(_allCoins.sublist(start, end));
+    coins.addAll(_filteredCoins.sublist(start, end));
 
-    hasMore = end < _allCoins.length;
+    hasMore = end < _filteredCoins.length;
 
     isLoadingMore.value = false;
   }

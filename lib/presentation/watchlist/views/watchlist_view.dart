@@ -71,7 +71,7 @@ class WatchlistView extends GetView<WatchlistController> {
           child: ListView.separated(
             padding: const EdgeInsets.all(16),
             itemCount: controller.watchlistCoins.length,
-            separatorBuilder: (_, __) =>
+            separatorBuilder: (_, _) =>
             const SizedBox(height: 12),
             itemBuilder: (context, index) {
               final coin = controller.watchlistCoins[index];
