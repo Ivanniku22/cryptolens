@@ -48,17 +48,29 @@ class WatchlistController extends GetxController {
         allCoins.where((coin) => watchlistIds.contains(coin.id)),
       );
     } catch (e) {
-      errorMessage.value = 'Failed to load watchlist. Please try again.';
+      errorMessage.value =
+      'Failed to load watchlist. Please try again.';
     } finally {
       isLoading.value = false;
     }
   }
 
-  void addToWatchlist(String coinId) {
+  Future<void> addToWatchlist(String coinId) async {
     if (watchlistIds.contains(coinId)) return;
 
     watchlistIds.add(coinId);
     _saveWatchlist();
+
+    try {
+      final coin = await _repository.getCoinById(coinId);
+
+      if (watchlistIds.contains(coinId) &&
+          !watchlistCoins.any((item) => item.id == coinId)) {
+        watchlistCoins.add(coin);
+      }
+    } catch (e) {
+      errorMessage.value = 'Could not load the selected coin.';
+    }
   }
 
   void removeFromWatchlist(String coinId) {
@@ -71,11 +83,11 @@ class WatchlistController extends GetxController {
     return watchlistIds.contains(coinId);
   }
 
-  void toggleWatchlist(String coinId) {
+  Future<void> toggleWatchlist(String coinId) async {
     if (isInWatchlist(coinId)) {
       removeFromWatchlist(coinId);
     } else {
-      addToWatchlist(coinId);
+      await addToWatchlist(coinId);
     }
   }
 

@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../app/routes/app_routes.dart';
 import '../../../core/utils/price_formatter.dart';
 import '../controller/watchlist_controller.dart';
 
@@ -76,87 +77,95 @@ class WatchlistView extends GetView<WatchlistController> {
               final coin = controller.watchlistCoins[index];
               final isPositive = coin.percentChange24h >= 0;
 
-              return Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: cardColor,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: borderColor),
-                ),
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      backgroundColor: borderColor,
-                      child: Text(
-                        coin.symbol.length > 3
-                            ? coin.symbol.substring(0, 3)
-                            : coin.symbol,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
+              return InkWell(
+                onTap: () {
+                  Get.toNamed(
+                    AppRoutes.coinDetails,
+                    arguments: coin.id,
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: cardColor,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: borderColor),
+                  ),
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        backgroundColor: borderColor,
+                        child: Text(
+                          coin.symbol.length > 3
+                              ? coin.symbol.substring(0, 3)
+                              : coin.symbol,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              coin.name,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 15,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              coin.symbol.toUpperCase(),
+                              style: const TextStyle(
+                                color: Colors.white54,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            coin.name,
+                            PriceFormatter.format(coin.price),
                             style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.w600,
-                              fontSize: 15,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 5),
                           Text(
-                            coin.symbol.toUpperCase(),
-                            style: const TextStyle(
-                              color: Colors.white54,
+                            '${isPositive ? '+' : ''}${coin.percentChange24h.toStringAsFixed(2)}%',
+                            style: TextStyle(
+                              color: isPositive
+                                  ? greenColor
+                                  : Colors.redAccent,
                               fontSize: 12,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ],
                       ),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          PriceFormatter.format(coin.price),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                          ),
+                      const SizedBox(width: 8),
+                      IconButton(
+                        onPressed: () {
+                          controller.removeFromWatchlist(coin.id);
+                        },
+                        icon: const Icon(
+                          Icons.favorite,
+                          color: Colors.redAccent,
                         ),
-                        const SizedBox(height: 5),
-                        Text(
-                          '${isPositive ? '+' : ''}${coin.percentChange24h.toStringAsFixed(2)}%',
-                          style: TextStyle(
-                            color: isPositive
-                                ? greenColor
-                                : Colors.redAccent,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(width: 8),
-                    IconButton(
-                      onPressed: () {
-                        controller.removeFromWatchlist(coin.id);
-                      },
-                      icon: const Icon(
-                        Icons.favorite,
-                        color: Colors.redAccent,
+                        tooltip: 'Remove from Watchlist',
                       ),
-                      tooltip: 'Remove from Watchlist',
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               );
             },
