@@ -72,7 +72,10 @@ class HomeView extends GetView<HomeController> {
                       Icons.close,
                       color: Colors.white54,
                     ),
-                    onPressed: controller.clearSearch,
+                    onPressed: () {
+                      controller.clearSearch();
+                      FocusScope.of(context).unfocus();
+                    },
                   );
                 }),
                 filled: true,
